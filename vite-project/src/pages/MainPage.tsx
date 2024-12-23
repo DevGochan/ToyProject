@@ -5,7 +5,7 @@ import todoImage from './../../src/images/1-731f7d48.png';
 const MainPage = () => {
   return (
     <>
-      <Link to="/TodoTemplate" style={{ display: 'contents' }}>
+      <Link to="/TodoPage" style={{ display: 'contents' }}>
         <TodoBtn>
           <img
             src={todoImage}

@@ -1,21 +1,17 @@
 import './App.css';
-import TodoTemplate from './pages/TodoList/TodoTemplate';
-import TodoInsert from './pages/TodoList/TodoInsert';
 import { Route, Routes } from 'react-router-dom';
-import Main from './pages/MainPage';
-import TodoList from './pages/TodoList/TodoList';
+import MainPage from './pages/MainPage';
+import TodoPage from './pages/TodoPage';
 
 function App() {
   return (
     <div className="App">
       <Routes>
-        <Route path="/" element={<Main />} />
-        <Route path="/TodoTemplate" element={<TodoTemplate />} />
+        <Route path="/" element={<MainPage />} />
+        <Route path="/TodoPage" element={<TodoPage />} />
       </Routes>
     </div>
   );
 }
 
 export default App;
-
-//  https://www.youtube.com/watch?v=8VilHGPmrck 참고
