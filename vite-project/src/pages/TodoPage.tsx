@@ -39,6 +39,17 @@ const TodoPage = () => {
     setTodoList(todoList.filter((todoItem) => todoItem.id !== id));
   };
 
+  const textUpdateHandler = (newTodo: TList): void => {
+    const newTodoList = todoList.map((item) => {
+      if (item.id === newTodo.id) {
+        return newTodo;
+      } else {
+        return item;
+      }
+    });
+    setTodoList(newTodoList);
+  };
+
   return (
     <>
       <HomeContainer>
@@ -55,6 +66,7 @@ const TodoPage = () => {
               text={item.text}
               completed={item.completed}
               onClickDelete={textDeleteHandler}
+              onClickUpdate={textUpdateHandler}
             />
           ))}
         </div>
@@ -79,6 +91,8 @@ const HomeContainer = styled.div`
       background-color: #f9e3bc;
       color: #fff;
       text-align: center;
+      padding: 10px;
+      box-sizing: border-box;
     }
   }
 `;

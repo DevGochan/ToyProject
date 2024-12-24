@@ -31,14 +31,27 @@ const TodoInputContainer = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
+
+  form {
+    display: flex; // form 요소에도 flex 사용
+    width: 100%; // form의 너비를 100%로 설정
+  }
+
   input {
-    width: 100%;
+    width: 70%;
+    height: 40px; // 높이를 명시적으로 설정
     border: none;
     border-bottom: 1px solid #f9e3bc;
+    text-align: center;
+    align-items: center;
+    line-height: 40px; // 높이에 맞춰서 수직 정렬
+    padding: 5px;
+    margin: 0; // 마진 제거
     &:focus {
       outline: none;
     }
   }
+
   button {
     width: 30%;
     background-color: #f9e3bc;
@@ -47,11 +60,20 @@ const TodoInputContainer = styled.div`
     border: none;
     padding: 10px;
     cursor: pointer;
+    display: flex; // 아이콘과 텍스트를 중앙 정렬하기 위해 flex 사용
+    align-items: center; // 수직 중앙 정렬
+    justify-content: center; // 수평 중앙 정렬
+
     &:active {
       box-shadow: inset -0.3rem -0.1rem 1.4rem #fbfbfb,
         inset 0.3rem 0.4rem 0.8rem #bec5d0;
       cursor: pointer;
     }
+
+    svg {
+      font-size: 30px; // 아이콘 크기 조정
+    }
   }
 `;
+
 export default TodoInput;
