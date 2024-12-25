@@ -1,7 +1,13 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import { MdCheckBoxOutlineBlank, MdEdit, MdDelete } from 'react-icons/md';
+import {
+  MdCheckBoxOutlineBlank,
+  MdEdit,
+  MdDelete,
+  MdCancel,
+} from 'react-icons/md';
 import { FaCheckSquare } from 'react-icons/fa';
+import { LiaSave } from 'react-icons/lia';
 
 interface TList {
   id: number;
@@ -36,18 +42,33 @@ const TodoList = ({
     const updatedTodoItem = {
       id: id,
       text: updatedText,
-      completed: completed,
+      completed: updatedText == text || completed == false ? completed : false,
     };
     onClickUpdate(updatedTodoItem);
     setIsUpdating(false);
+  };
+
+  const handleComplete = () => {
+    const updatedTodoItem = {
+      id: id,
+      text: text,
+      completed: !completed,
+    };
+    onClickUpdate(updatedTodoItem);
   };
 
   return (
     <div>
       {!isUpdating ? (
         <TodoContainer>
-          {completed ? <FaCheckSquare /> : <MdCheckBoxOutlineBlank />}
-          <p>{text}</p>
+          {completed ? (
+            <FaCheckSquare onClick={handleComplete} />
+          ) : (
+            <MdCheckBoxOutlineBlank onClick={handleComplete} />
+          )}
+          <p style={completed ? { textDecoration: 'line-through' } : undefined}>
+            {text}
+          </p>
           <div className="buttonContainer">
             <MdEdit onClick={() => setIsUpdating(true)} />
             <MdDelete onClick={() => onClickDelete(id)} />
@@ -62,10 +83,13 @@ const TodoList = ({
               onChange={handleInputChange}
             />
             <div className="buttonContainer">
-              <button type="submit">확인</button>
-              <button type="button" onClick={() => setIsUpdating(false)}>
-                취소
+              <button
+                type="submit"
+                style={{ background: 'none', border: 'none', padding: 0 }}
+              >
+                <LiaSave />
               </button>
+              <MdCancel type="button" onClick={() => setIsUpdating(false)} />
             </div>
           </form>
         </TodoContainer>
@@ -120,6 +144,23 @@ const TodoContainer = styled.div`
   svg {
     width: 10%;
     font-size: 30px;
+  }
+
+  input {
+    width: 100%;
+    height: 32px;
+    font-size: 15px;
+    border: 0;
+    border-radius: 15px;
+    outline: none;
+    padding-left: 10px;
+    background-color: rgb(233, 233, 233);
+  }
+
+  form {
+    display: flex;
+    align-items: center;
+    height: 100%;
   }
 `;
 
