@@ -24,15 +24,53 @@ const TodoList = ({
   onClickDelete,
   onClickUpdate,
 }: TodoItemProps) => {
+  const [isUpdating, setIsUpdating] = useState<boolean>(false);
+  const [updatedText, setUpdatedText] = useState<string>(text);
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setUpdatedText(event.target.value);
+  };
+
+  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const updatedTodoItem = {
+      id: id,
+      text: updatedText,
+      completed: completed,
+    };
+    onClickUpdate(updatedTodoItem);
+    setIsUpdating(false);
+  };
+
   return (
-    <TodoContainer>
-      {completed ? <FaCheckSquare /> : <MdCheckBoxOutlineBlank />}
-      <p>{text}</p>
-      <div className="buttonContainer">
-        <MdEdit />
-        <MdDelete onClick={() => onClickDelete(id)} />
-      </div>
-    </TodoContainer>
+    <div>
+      {!isUpdating ? (
+        <TodoContainer>
+          {completed ? <FaCheckSquare /> : <MdCheckBoxOutlineBlank />}
+          <p>{text}</p>
+          <div className="buttonContainer">
+            <MdEdit onClick={() => setIsUpdating(true)} />
+            <MdDelete onClick={() => onClickDelete(id)} />
+          </div>
+        </TodoContainer>
+      ) : (
+        <TodoContainer>
+          <form onSubmit={handleFormSubmit}>
+            <input
+              type="text"
+              value={updatedText}
+              onChange={handleInputChange}
+            />
+            <div className="buttonContainer">
+              <button type="submit">확인</button>
+              <button type="button" onClick={() => setIsUpdating(false)}>
+                취소
+              </button>
+            </div>
+          </form>
+        </TodoContainer>
+      )}
+    </div>
   );
 };
 
@@ -65,6 +103,7 @@ const TodoContainer = styled.div`
     width: auto; // 자동 너비로 설정
 
     svg {
+      width: 30px;
       margin-left: 10px; // 버튼 간의 간격 조정
       cursor: pointer;
       font-size: 24px; // 아이콘 크기 조정

@@ -38,7 +38,7 @@ const TodoInputContainer = styled.div`
   }
 
   input {
-    width: 70%;
+    width: 80%;
     height: 40px; // 높이를 명시적으로 설정
     border: none;
     border-bottom: 1px solid #f9e3bc;
@@ -53,7 +53,7 @@ const TodoInputContainer = styled.div`
   }
 
   button {
-    width: 30%;
+    width: 20%;
     background-color: #f9e3bc;
     color: white;
     font-weight: 900;
