@@ -11,14 +11,7 @@ interface TList {
 
 const TodoPage = () => {
   const [inputText, setInputText] = useState('');
-  const [todoList, setTodoList] = useState<TList[]>([
-    {
-      id: 1,
-      text: '할일 1',
-      completed: false,
-    },
-    { id: 2, text: '할일 2', completed: false },
-  ]);
+  const [todoList, setTodoList] = useState<TList[]>([]);
 
   const textTypingHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputText(e.target.value);
