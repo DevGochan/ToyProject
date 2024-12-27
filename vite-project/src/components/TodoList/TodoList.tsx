@@ -9,24 +9,25 @@ import {
 import { FaCheckSquare } from 'react-icons/fa';
 import { LiaSave } from 'react-icons/lia';
 
-interface TList {
-  id: number;
-  text: string;
-  completed: boolean;
-}
-
 interface TodoItemProps {
-  id: number;
+  id: string; // id 타입을 string으로 변경
   text: string;
   completed: boolean;
-  onClickDelete(id: number): void;
-  onClickUpdate(updatedTodoItem: TList): void;
+  userID: string; // userID 추가
+  onClickDelete: (id: string) => void;
+  onClickUpdate: (newTodo: {
+    id: string;
+    text: string;
+    completed: boolean;
+    userID: string; // userID 추가
+  }) => void; // userID 추가
 }
 
 const TodoList = ({
   id,
   text,
   completed,
+  userID, // userID 추가
   onClickDelete,
   onClickUpdate,
 }: TodoItemProps) => {
@@ -42,7 +43,8 @@ const TodoList = ({
     const updatedTodoItem = {
       id: id,
       text: updatedText,
-      completed: updatedText == text || completed == false ? completed : false,
+      completed: completed, // 완료 상태는 그대로 유지
+      userID: userID, // userID 추가
     };
     onClickUpdate(updatedTodoItem);
     setIsUpdating(false);
@@ -53,6 +55,7 @@ const TodoList = ({
       id: id,
       text: text,
       completed: !completed,
+      userID: userID, // userID 추가
     };
     onClickUpdate(updatedTodoItem);
   };
@@ -62,16 +65,20 @@ const TodoList = ({
       {!isUpdating ? (
         <TodoContainer>
           {completed ? (
-            <FaCheckSquare onClick={handleComplete} />
+            <div style={{ width: '100px', fontSize: '30px' }}>
+              <FaCheckSquare onClick={handleComplete} />
+            </div>
           ) : (
-            <MdCheckBoxOutlineBlank onClick={handleComplete} />
+            <div style={{ width: '100px', fontSize: '30px' }}>
+              <MdCheckBoxOutlineBlank onClick={handleComplete} />
+            </div>
           )}
           <p style={completed ? { textDecoration: 'line-through' } : undefined}>
             {text}
           </p>
           <div className="buttonContainer">
-            <MdEdit onClick={() => setIsUpdating(true)} />
-            <MdDelete onClick={() => onClickDelete(id)} />
+            <MdEdit onClick={() => setIsUpdating(true)} aria-label="Edit" />
+            <MdDelete onClick={() => onClickDelete(id)} aria-label="Delete" />
           </div>
         </TodoContainer>
       ) : (
@@ -103,47 +110,42 @@ const TodoContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px; // 패딩 추가
+  padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
   border-left-width: 10px;
   border-left-color: #f9e3bc;
   margin-bottom: 10px;
   background-color: #f9f9f9;
-  box-sizing: border-box; // 박스 크기 계산 방식 변경
+  box-sizing: border-box;
 
   p {
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 1; /* 원하는 줄 수 */
+    -webkit-line-clamp: 1;
     overflow: hidden;
     text-overflow: ellipsis;
     width: 100%;
   }
 
   .buttonContainer {
-    display: flex; // flexbox로 변경
-    align-items: center; // 수직 중앙 정렬
-    width: auto; // 자동 너비로 설정
+    display: flex;
+    align-items: center;
+    width: auto;
 
     svg {
       width: 30px;
-      margin-left: 10px; // 버튼 간의 간격 조정
+      margin-left: 10px;
       cursor: pointer;
-      font-size: 24px; // 아이콘 크기 조정
-      padding: 10px; // 아이콘 주변에 패딩 추가
-      border-radius: 5px; // 아이콘에 둥근 테두리 추가
-      transition: background-color 0.3s; // 부드러운 배경색 전환
+      font-size: 24px;
+      padding: 10px;
+      border-radius: 5px;
+      transition: background-color 0.3s;
 
       &:hover {
-        background-color: #e0e0e0; // 호버 시 배경색 변경
+        background-color: #e0e0e0;
       }
     }
-  }
-
-  svg {
-    width: 10%;
-    font-size: 30px;
   }
 
   input {
