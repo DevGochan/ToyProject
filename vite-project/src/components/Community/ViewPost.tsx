@@ -19,11 +19,11 @@ interface Post {
 }
 
 interface Comment {
-  userId: string;
+  userId?: string | null;
   content: string;
   created: Date;
-  userImage?: string;
-  userNickname?: string;
+  userImage?: string | null;
+  userNickname?: string | null;
   commentLikes: number;
   commentDisLikes: number;
   likedBy?: string[]; // 추천한 사용자 ID 배열
@@ -42,7 +42,6 @@ const ViewPost: React.FC<ViewPostProps> = ({ post, closeModal }) => {
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState<any[]>(post.comments || []); // 댓글 상태
   const { userData } = useAuth();
-  const userId = post.id; // 현재 사용자 ID
 
   useEffect(() => {
     handleView(); // 컴포넌트가 마운트될 때 조회수 증가
@@ -61,7 +60,7 @@ const ViewPost: React.FC<ViewPostProps> = ({ post, closeModal }) => {
     const postDoc = await getDoc(postRef);
     if (postDoc.exists()) {
       const postData = postDoc.data();
-      if (postData.likedBy && postData.likedBy.includes(userId)) {
+      if (postData.likedBy && postData.likedBy.includes(userData)) {
         setHasLiked(true); // 이미 추천한 경우
       }
     }
@@ -82,7 +81,7 @@ const ViewPost: React.FC<ViewPostProps> = ({ post, closeModal }) => {
 
       // 추천한 사용자의 ID를 추가
       if (likedBy.length < 3) {
-        likedBy.push(userId);
+        likedBy.push(userData);
         setLikes(updatedLikes);
         await updateDoc(postRef, { likes: updatedLikes, likedBy });
       } else {
@@ -96,11 +95,11 @@ const ViewPost: React.FC<ViewPostProps> = ({ post, closeModal }) => {
     if (!comment.trim()) return; // 빈 댓글은 제출하지 않음
 
     const newComment: Comment = {
-      userId,
+      userId: userData?.uid,
       content: comment,
       created: new Date(),
-      userImage: post.userImage,
-      userNickname: post.userNickname,
+      userImage: userData?.photoURL,
+      userNickname: userData?.displayName,
       commentLikes: 0,
       commentDisLikes: 0,
       likedBy: [], // 초기화
@@ -124,6 +123,11 @@ const ViewPost: React.FC<ViewPostProps> = ({ post, closeModal }) => {
 
     const updatedComments = [...comments];
     const comment = updatedComments[index];
+
+    if (comment.userId === userData.uid) {
+      alert('자신의 댓글은 추천할 수 없습니다.');
+      return;
+    }
 
     // 이미 추천한 경우
     if (comment.likedBy?.includes(post.id)) {
@@ -151,6 +155,11 @@ const ViewPost: React.FC<ViewPostProps> = ({ post, closeModal }) => {
 
     const updatedComments = [...comments];
     const comment = updatedComments[index];
+
+    if (comment.userId === userData.uid) {
+      alert('자신의 댓글은 비추천할 수 없습니다.');
+      return;
+    }
 
     // 이미 비추천한 경우
     if (comment.dislikedBy?.includes(post.id)) {
