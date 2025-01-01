@@ -124,7 +124,14 @@ const TodoPage: React.FC = () => {
     <>
       <HomeContainer>
         <div className="entireContainer">
-          <h1>TodoList</h1>
+          <h1>
+            {' '}
+            {userData ? (
+              <h2>{`${userData.displayName}'s TodoList`}</h2>
+            ) : (
+              <h2>로그인 해주세요!</h2>
+            )}
+          </h1>
           <TodoInput
             onChange={textTypingHandler}
             onSubmit={textInputHandler}

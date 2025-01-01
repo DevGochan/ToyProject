@@ -1,36 +1,36 @@
 import React, {
   createContext,
   useContext,
-  useState,
   useEffect,
+  useState,
   ReactNode,
 } from 'react';
 import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
 
 interface AuthContextType {
   userData: User | null;
+  setUserData: (user: User | null) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-interface UserProviderProps {
-  children: ReactNode;
-}
-
-export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
+export const UserProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [userData, setUserData] = useState<User | null>(null);
   const auth = getAuth();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUserData(user);
+      setUserData(user); // 로그인 상태 관리
     });
-
     return () => unsubscribe();
   }, [auth]);
 
   return (
-    <AuthContext.Provider value={{ userData }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{ userData, setUserData }}>
+      {children}
+    </AuthContext.Provider>
   );
 };
 

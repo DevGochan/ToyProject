@@ -8,32 +8,26 @@ import { CiLogout } from 'react-icons/ci';
 import { RiHome2Line } from 'react-icons/ri';
 import { FaList } from 'react-icons/fa';
 import { PiClipboardTextBold } from 'react-icons/pi';
-
-type User = {
-  uid: string;
-  displayName: string | null;
-  email: string | null;
-  // 필요한 다른 사용자 속성 추가
-};
+import { useAuth } from '../UserContext';
 
 const Header = () => {
-  const [userData, setUserData] = useState<User | null>(null);
+  const { userData, setUserData } = useAuth();
 
-  function handleGoogleLogin() {
+  const handleGoogleLogin = () => {
     const provider = new GoogleAuthProvider();
     signInWithPopup(auth, provider)
       .then((data) => {
-        setUserData(data.user); // user data 설정
+        setUserData(data.user);
         console.log(data);
       })
       .catch((err) => {
         console.log(err);
       });
-  }
+  };
 
   const handleLogout = () => {
     auth.signOut().then(() => {
-      setUserData(null); // 로그아웃 시 상태 초기화
+      setUserData(null);
     });
   };
 
@@ -42,28 +36,20 @@ const Header = () => {
       <Logo>이것저것 기능구현 사이트</Logo>
       <Nav>
         <NavItem>
-          <StyledLink to="/" style={{ fontSize: '24px', alignItems: 'center' }}>
-            <RiHome2Line style={{ fontSize: '40px', marginBottom: '-10px' }} />
+          <StyledLink to="/" style={{ fontSize: '24px' }}>
+            <RiHome2Line style={{ fontSize: '40px' }} />
             Home
           </StyledLink>
         </NavItem>
         <NavItem>
-          <StyledLink
-            to="/TodoPage"
-            style={{ fontSize: '24px', alignItems: 'center' }}
-          >
-            <FaList style={{ fontSize: '40px', marginBottom: '-10px' }} />
-            Todo{' '}
+          <StyledLink to="/TodoPage" style={{ fontSize: '24px' }}>
+            <FaList style={{ fontSize: '40px' }} />
+            Todo
           </StyledLink>
         </NavItem>
         <NavItem>
-          <StyledLink
-            to="/CommunityPage"
-            style={{ fontSize: '24px', alignItems: 'center' }}
-          >
-            <PiClipboardTextBold
-              style={{ fontSize: '40px', marginBottom: '-10px' }}
-            />
+          <StyledLink to="/CommunityPage" style={{ fontSize: '24px' }}>
+            <PiClipboardTextBold style={{ fontSize: '40px' }} />
             게시판
           </StyledLink>
         </NavItem>
@@ -72,16 +58,49 @@ const Header = () => {
             <StyledLink
               to="/"
               onClick={handleLogout}
-              style={{ fontSize: '24px', alignItems: 'center' }}
+              style={{
+                fontSize: '24px',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                textAlign: 'center',
+              }}
             >
-              <MdLogin style={{ fontSize: '40px', marginBottom: '-10px' }} />
-              로그아웃
+              {userData.photoURL ? (
+                <img
+                  src={userData.photoURL}
+                  alt="User Avatar"
+                  style={{
+                    width: '40px',
+                    borderRadius: '50%',
+                    marginBottom: '8px',
+                  }}
+                />
+              ) : (
+                <div
+                  style={{
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '50%',
+                    backgroundColor: '#ccc',
+                    marginBottom: '8px',
+                  }}
+                />
+              )}
+              {userData.displayName}
+              <CiLogout style={{ fontSize: '40px', marginBottom: '-10px' }} />
             </StyledLink>
           ) : (
             <StyledLink
               to="#"
               onClick={handleGoogleLogin}
-              style={{ fontSize: '24px', alignItems: 'center' }}
+              style={{
+                fontSize: '24px',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                textAlign: 'center',
+              }}
             >
               <MdLogin style={{ fontSize: '40px', marginBottom: '-10px' }} />
               로그인
@@ -93,27 +112,16 @@ const Header = () => {
   );
 };
 
-const Logined = styled.div`
-  display: flex;
-  align-items: center; // 아이콘과 텍스트가 수직 정렬되도록 추가
-  span {
-    margin-right: -20px; // 아이콘과 텍스트 사이에 간격 추가
-  }
-`;
-
-const LogoutIcon = styled(CiLogout)`
-  font-size: 30px; // 원하는 크기로 조정
-`;
-
 const HeaderContainer = styled.header`
   display: flex;
-  height: 100px;
+  height: 120px;
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  background-color: #777;
+  background-color: #333; /* 어두운 배경 */
   color: white;
   font-size: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* 그림자 추가 */
 `;
 
 const Logo = styled.h1`
@@ -122,6 +130,7 @@ const Logo = styled.h1`
 
 const Nav = styled.nav`
   display: flex;
+  align-items: center;
 `;
 
 const NavItem = styled.div`
@@ -131,8 +140,20 @@ const NavItem = styled.div`
 const StyledLink = styled(Link)`
   color: white;
   text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.3s ease; /* 부드러운 전환 효과 */
+  padding: 8px; /* 패딩 추가 */
+  line-height: 1.2; /* 라인 높이 조정 */
+
   &:hover {
-    text-decoration: underline;
+    color: #ffcc00; /* 호버 시 색상 변경 */
+    transform: translateY(-3px); /* 위로 이동 효과 */
+  }
+
+  img {
+    border-radius: 50%; /* 프로필 이미지 둥글게 */
   }
 `;
 

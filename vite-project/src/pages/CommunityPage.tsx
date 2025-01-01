@@ -1,18 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { db } from '../firebase-config';
-import {
-  collection,
-  query,
-  orderBy,
-  onSnapshot,
-  addDoc,
-  Timestamp,
-  deleteDoc,
-  doc,
-  updateDoc,
-} from 'firebase/firestore';
-import { useAuth } from '../UserContext';
 import styled from 'styled-components';
+import PostList from '../components/Community/PostList';
 
 const CommunityPage = () => {
   return (
@@ -20,6 +7,7 @@ const CommunityPage = () => {
       <HomeContainer>
         <div className="entireContainer">
           <h1>자유 게시판</h1>
+          <PostList />
         </div>
       </HomeContainer>
     </>
@@ -30,16 +18,15 @@ const HomeContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 50vh;
   .entireContainer {
-    width: 60%;
+    width: 80%;
     height: 70%;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    border: 1px solid #f9e3bc;
     h1 {
-      background-color: #f9e3bc;
+      background-color: #89ade1;
       color: #fff;
       text-align: center;
       padding: 10px;
