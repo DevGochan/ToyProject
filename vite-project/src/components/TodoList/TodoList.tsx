@@ -114,7 +114,7 @@ const TodoContainer = styled.div`
   border: 1px solid #ccc;
   border-radius: 5px;
   border-left-width: 10px;
-  border-left-color: #f9e3bc;
+  border-left-color: #89ade1;
   margin-bottom: 10px;
   background-color: #f9f9f9;
   box-sizing: border-box;

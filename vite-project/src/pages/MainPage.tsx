@@ -23,7 +23,7 @@ const TodoBtn = styled.div`
   justify-content: center;
   align-items: center;
   width: 30%;
-  margin-top: 200px;
+  margin-top: 100px;
   border-radius: 20px;
   background-color: #f0f0f0;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);

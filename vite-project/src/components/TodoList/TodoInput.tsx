@@ -27,7 +27,7 @@ const TodoInput = ({ onChange, onSubmit, inputText }: InputTextProps) => {
 };
 
 const TodoInputContainer = styled.div`
-  border-bottom: 1px solid #f9e3bc;
+  border-bottom: 1px solid #fff;
   width: 100%;
   display: flex;
   justify-content: center;
@@ -41,7 +41,7 @@ const TodoInputContainer = styled.div`
     width: 80%;
     height: 40px; // 높이를 명시적으로 설정
     border: none;
-    border-bottom: 1px solid #f9e3bc;
+    border-bottom: 1px solid #89ade1;
     text-align: center;
     align-items: center;
     line-height: 40px; // 높이에 맞춰서 수직 정렬
@@ -54,7 +54,7 @@ const TodoInputContainer = styled.div`
 
   button {
     width: 20%;
-    background-color: #f9e3bc;
+    background-color: #89ade1;
     color: white;
     font-weight: 900;
     border: none;

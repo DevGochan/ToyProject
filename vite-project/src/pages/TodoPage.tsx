@@ -151,16 +151,15 @@ const HomeContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 50vh;
   .entireContainer {
     width: 60%;
     height: 70%;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    border: 1px solid #f9e3bc;
     h1 {
-      background-color: #f9e3bc;
+      background-color: #89ade1;
       color: #fff;
       text-align: center;
       padding: 10px;

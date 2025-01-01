@@ -58,7 +58,7 @@ const Header = () => {
         </NavItem>
         <NavItem>
           <StyledLink
-            to="/Board"
+            to="/CommunityPage"
             style={{ fontSize: '24px', alignItems: 'center' }}
           >
             <PiClipboardTextBold
@@ -111,7 +111,7 @@ const HeaderContainer = styled.header`
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  background-color: #333;
+  background-color: #777;
   color: white;
   font-size: 20px;
 `;
