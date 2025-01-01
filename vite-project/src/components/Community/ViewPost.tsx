@@ -91,6 +91,10 @@ const ViewPost: React.FC<ViewPostProps> = ({ post, closeModal }) => {
   };
 
   const handleCommentSubmit = async (e: React.FormEvent) => {
+    if (!userData) {
+      alert('로그인이 필요한 서비스입니다.');
+    }
+
     e.preventDefault();
     if (!comment.trim()) return; // 빈 댓글은 제출하지 않음
 
