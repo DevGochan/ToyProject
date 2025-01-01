@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { auth } from '../../src/firebase-config';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { useState } from 'react';
 import { MdLogin } from 'react-icons/md';
 import { CiLogout } from 'react-icons/ci';
 import { RiHome2Line } from 'react-icons/ri';

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { db } from '../../firebase-config'; // Firestore 설정 파일 가져오기
-import { doc, updateDoc, getDoc, collection, addDoc } from 'firebase/firestore';
+import { doc, updateDoc, getDoc } from 'firebase/firestore';
 import { useAuth } from '../../UserContext';
 
 interface Post {
