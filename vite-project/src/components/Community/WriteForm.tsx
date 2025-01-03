@@ -22,15 +22,15 @@ const WriteForm: React.FC<WriteFormProps> = ({ closeModal, postCount }) => {
     }
     try {
       await addDoc(collection(db, 'Community'), {
-        title: title,
         content: content,
-        userID: userData.uid,
         created: Timestamp.now(),
-        postCount: postCount + 1,
-        userNickname: userData.displayName,
-        userImage: userData.photoURL,
-        views: 0,
         likes: 0,
+        postCount: postCount + 1,
+        title: title,
+        userID: userData.uid,
+        userImage: userData.photoURL,
+        userNickname: userData.displayName,
+        views: 0,
       });
       alert('게시글 작성이 완료되었습니다!');
       closeModal();

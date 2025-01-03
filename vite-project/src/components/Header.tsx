@@ -10,20 +10,17 @@ import { PiClipboardTextBold } from 'react-icons/pi';
 import { useAuth } from '../UserContext';
 
 const Header = () => {
-  const { userData, setUserData } = useAuth();
+  const { userData, setUserData } = useAuth(); // 사용자 인증 상태에 따라 다른 UI를 렌더링하기 위한 변수
 
+  // 구글 로그인 함수
   const handleGoogleLogin = () => {
     const provider = new GoogleAuthProvider();
-    signInWithPopup(auth, provider)
-      .then((data) => {
-        setUserData(data.user);
-        console.log(data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    signInWithPopup(auth, provider).then((data) => {
+      setUserData(data.user);
+    });
   };
 
+  // 구글 로그아웃 함수
   const handleLogout = () => {
     auth.signOut().then(() => {
       setUserData(null);
@@ -32,7 +29,7 @@ const Header = () => {
 
   return (
     <HeaderContainer>
-      <Logo>이것저것 기능구현 사이트</Logo>
+      <Logo>이것저것 구현해보는 사이트</Logo>
       <Nav>
         <NavItem>
           <StyledLink to="/" style={{ fontSize: '24px' }}>
@@ -40,18 +37,21 @@ const Header = () => {
             Home
           </StyledLink>
         </NavItem>
+
         <NavItem>
           <StyledLink to="/TodoPage" style={{ fontSize: '24px' }}>
             <FaList style={{ fontSize: '40px' }} />
             Todo
           </StyledLink>
         </NavItem>
+
         <NavItem>
           <StyledLink to="/CommunityPage" style={{ fontSize: '24px' }}>
             <PiClipboardTextBold style={{ fontSize: '40px' }} />
             게시판
           </StyledLink>
         </NavItem>
+
         <NavItem>
           {userData ? (
             <StyledLink

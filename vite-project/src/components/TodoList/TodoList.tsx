@@ -10,52 +10,55 @@ import { FaCheckSquare } from 'react-icons/fa';
 import { LiaSave } from 'react-icons/lia';
 
 interface TodoItemProps {
-  id: string; // id 타입을 string으로 변경
+  id: string;
   text: string;
   completed: boolean;
-  userID: string; // userID 추가
+  userID: string;
   onClickDelete: (id: string) => void;
   onClickUpdate: (newTodo: {
     id: string;
     text: string;
     completed: boolean;
-    userID: string; // userID 추가
-  }) => void; // userID 추가
+    userID: string;
+  }) => void;
 }
 
 const TodoList = ({
   id,
   text,
   completed,
-  userID, // userID 추가
+  userID,
   onClickDelete,
   onClickUpdate,
 }: TodoItemProps) => {
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
   const [updatedText, setUpdatedText] = useState<string>(text);
 
+  // 수정 모드에서 입력 필드의 텍스트 추적
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUpdatedText(event.target.value);
   };
 
+  // 수정 완료 버튼 터치시 호출됨
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const updatedTodoItem = {
       id: id,
       text: updatedText,
-      completed: completed, // 완료 상태는 그대로 유지
-      userID: userID, // userID 추가
+      completed: completed,
+      userID: userID,
     };
     onClickUpdate(updatedTodoItem);
     setIsUpdating(false);
   };
 
+  // 완료상태를 반전시켜 DB에 저장하는 함수 호출
   const handleComplete = () => {
     const updatedTodoItem = {
       id: id,
       text: text,
       completed: !completed,
-      userID: userID, // userID 추가
+      userID: userID,
     };
     onClickUpdate(updatedTodoItem);
   };

@@ -9,10 +9,10 @@ import ViewPost from './ViewPost';
 interface Post {
   id: string;
   title: string;
-  content: string; // 필요한 속성 추가
+  content: string;
   userNickname?: string;
   userImage?: string;
-  created: any; // 생성일 타입 (Date로 캐스팅할 수 있음)
+  created: any;
   views: number;
   likes: number;
   postCount: number; // 번호 계산을 위한 속성
@@ -20,26 +20,27 @@ interface Post {
 
 const PostList: React.FC = () => {
   const { userData } = useAuth();
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [searchTerm, setSearchTerm] = useState<string>('');
-  const [isWriteFormModalOpen, setIsWriteFormModalOpen] =
+  const [currentPage, setCurrentPage] = useState<number>(1); // 현재 페이지 번호
+  const [searchTerm, setSearchTerm] = useState<string>(''); // 검색어 저장
+  const [isWriteFormModalOpen, setIsWriteFormModalOpen] = //글쓰기 모달의 열림 상태 관리
     useState<boolean>(false);
-  const [isViewPostModalOpen, setIsViewPostModalOpen] =
+  const [isViewPostModalOpen, setIsViewPostModalOpen] = // 게시글 보기 모달의 열림 상태 관리
     useState<boolean>(false);
-  const [posts, setPosts] = useState<any[]>([]); // 게시글 상태 추가
+  const [posts, setPosts] = useState<any[]>([]); // 게시글 목록을 저장하는 상태
   const postsPerPage = 10;
-  const [selectedPost, setSelectedPost] = useState<any>(null); // 선택한 게시글 상태 추가
+  const [selectedPost, setSelectedPost] = useState<any>(null); // 선택한 게시글을 저장하는 상태
 
+  // 컴포넌트 마운트 시 DB에서 게시글 데이터 가져옴
   useEffect(() => {
     const q = query(collection(db, 'Community'), orderBy('created', 'desc'));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const postsData: any[] = [];
       querySnapshot.forEach((doc) => {
+        // 각 문서 순회
         postsData.push({ id: doc.id, ...doc.data() });
       });
       setPosts(postsData);
     });
-
     return () => unsubscribe(); // 컴포넌트 언마운트 시 리스너 정리
   }, []);
 
@@ -47,23 +48,25 @@ const PostList: React.FC = () => {
   const filteredPosts = posts.filter(
     (post) =>
       post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      post.userNickname?.toLowerCase().includes(searchTerm.toLowerCase()), // 닉네임으로도 검색 가능
+      post.userNickname?.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
+  // 페이지네이션
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentPosts = filteredPosts.slice(indexOfFirstPost, indexOfLastPost);
-  const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
-  const pageNumbers = [...Array(totalPages).keys()].map((num) => num + 1);
+  const currentPosts = filteredPosts.slice(indexOfFirstPost, indexOfLastPost); // 현재 페이지에 표시할 게시글 목록 계산
+  const totalPages = Math.ceil(filteredPosts.length / postsPerPage); // 총 페이지 수 계산
+  const pageNumbers = [...Array(totalPages).keys()].map((num) => num + 1); // 각 페이지 번호 생성
 
+  // 페이지 이동 핸들러
   const handlePrevPage = () => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
-
   const handleNextPage = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
 
+  // 게시글 작성 핸들러
   const handleWritePost = () => {
     if (!userData) {
       alert('로그인이 필요한 서비스입니다.');
@@ -76,6 +79,7 @@ const PostList: React.FC = () => {
     setIsWriteFormModalOpen(false); // 모달 닫기
   };
 
+  // 특정 게시글 클릭 시 해당 게시글을 자세히 보여주는 모달 오픈
   const handleViewPost = (post: Post) => {
     setSelectedPost(post); // 선택한 게시글 설정
     setIsViewPostModalOpen(true); // 모달 열기
@@ -105,8 +109,7 @@ const PostList: React.FC = () => {
               <td>{post.postCount}</td> {/* 번호 계산 */}
               <TitleCell onClick={() => handleViewPost(post)}>
                 {post.title}
-              </TitleCell>{' '}
-              {/* 클릭 시 게시글 데이터 전달 */}
+              </TitleCell>
               <td>
                 <img
                   src={post.userImage}
@@ -119,9 +122,7 @@ const PostList: React.FC = () => {
                 />
                 {post.userNickname || '익명'}
               </td>{' '}
-              {/* 닉네임 표시, 없으면 '익명' */}
               <td>
-                {' '}
                 {post.created
                   ?.toDate()
                   .toLocaleDateString('en-US', {
@@ -129,7 +130,6 @@ const PostList: React.FC = () => {
                     day: '2-digit', // 두 자리 일
                   })
                   .replace(',', '')}{' '}
-                {/* MM.DD 형식 */}
                 {post.created?.toDate().toLocaleTimeString('en-US', {
                   hour: '2-digit', // 두 자리 시
                   minute: '2-digit', // 두 자리 분
@@ -137,7 +137,6 @@ const PostList: React.FC = () => {
                 })}{' '}
                 {/* HH:MM 형식 */}
               </td>
-              {/* 등록일 포맷 */}
               <td>{post.views}</td>
               <td>{post.likes}</td>
             </tr>
@@ -176,7 +175,6 @@ const PostList: React.FC = () => {
           postCount={filteredPosts.length} // 게시글 수 전달
         />
       )}
-      {/* 제목 터치시 글 보여주기 ViewPost */}
       {isViewPostModalOpen && selectedPost && (
         <ViewPost post={selectedPost} closeModal={closeViewPostModal} />
       )}

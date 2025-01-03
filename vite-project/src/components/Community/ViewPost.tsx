@@ -1,23 +1,25 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { db } from '../../firebase-config'; // Firestore 설정 파일 가져오기
+import { db } from '../../firebase-config';
 import { doc, updateDoc, getDoc } from 'firebase/firestore';
 import { useAuth } from '../../UserContext';
 
+// 게시글 구조 정의
 interface Post {
   id: string;
   title: string;
-  content: string; // 필요한 속성 추가
+  content: string;
   userNickname?: string;
   userImage?: string;
-  created: any; // 생성일 타입 (Date로 캐스팅할 수 있음)
+  created: any;
   views: number;
   likes: number;
-  postCount: number; // 번호 계산을 위한 속성
+  postCount: number;
   likedBy?: string[]; // 추천한 사용자의 ID를 저장하는 배열
-  comments?: Comment[]; // 댓글 데이터 추가
+  comments?: Comment[];
 }
 
+// 댓글 구조 정의
 interface Comment {
   userId?: string | null;
   content: string;
@@ -30,24 +32,24 @@ interface Comment {
   dislikedBy?: string[]; // 비추천한 사용자 ID 배열
 }
 
+// ViewPost 컴포넌트에 전달되는 props의 타입 정의
 interface ViewPostProps {
   post: Post;
   closeModal: () => void;
 }
 
 const ViewPost: React.FC<ViewPostProps> = ({ post, closeModal }) => {
-  const [views, setViews] = useState(post.views);
-  const [likes, setLikes] = useState(post.likes);
-  const [hasLiked, setHasLiked] = useState(false);
+  const [views, setViews] = useState(post.views); // 게시글의 조회수 관리
+  const [likes, setLikes] = useState(post.likes); // 게시글의 추천수 관리
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState<any[]>(post.comments || []); // 댓글 상태
   const { userData } = useAuth();
 
   useEffect(() => {
     handleView(); // 컴포넌트가 마운트될 때 조회수 증가
-    checkUserLike(); // 컴포넌트가 마운트될 때 추천 여부 확인
   }, []);
 
+  // 조회수 관리 함수
   const handleView = async () => {
     const updatedViews = views + 1;
     setViews(updatedViews);
@@ -55,17 +57,7 @@ const ViewPost: React.FC<ViewPostProps> = ({ post, closeModal }) => {
     await updateDoc(postRef, { views: updatedViews });
   };
 
-  const checkUserLike = async () => {
-    const postRef = doc(db, 'Community', post.id);
-    const postDoc = await getDoc(postRef);
-    if (postDoc.exists()) {
-      const postData = postDoc.data();
-      if (postData.likedBy && postData.likedBy.includes(userData)) {
-        setHasLiked(true); // 이미 추천한 경우
-      }
-    }
-  };
-
+  // 추천수 관리 함수
   const handleLike = async () => {
     if (!userData) {
       alert('로그인이 필요한 서비스입니다.');
@@ -73,15 +65,17 @@ const ViewPost: React.FC<ViewPostProps> = ({ post, closeModal }) => {
     }
     const postRef = doc(db, 'Community', post.id);
     const postDoc = await getDoc(postRef);
-
     if (postDoc.exists()) {
       const postData = postDoc.data();
       const updatedLikes = likes + 1;
       const likedBy = postData.likedBy || [];
+      const userLikesCount = likedBy.filter(
+        (id: string) => id === userData.uid,
+      ).length;
 
-      // 추천한 사용자의 ID를 추가
-      if (likedBy.length < 3) {
+      if (userLikesCount < 3) {
         likedBy.push(userData.uid);
+        alert(userData.displayName + '님 추천 완료되었습니다.');
         setLikes(updatedLikes);
         await updateDoc(postRef, { likes: updatedLikes, likedBy });
       } else {
@@ -90,11 +84,11 @@ const ViewPost: React.FC<ViewPostProps> = ({ post, closeModal }) => {
     }
   };
 
+  // 댓글 제출 시 호출
   const handleCommentSubmit = async (e: React.FormEvent) => {
     if (!userData) {
       alert('로그인이 필요한 서비스입니다.');
     }
-
     e.preventDefault();
     if (!comment.trim()) return; // 빈 댓글은 제출하지 않음
 
@@ -109,36 +103,30 @@ const ViewPost: React.FC<ViewPostProps> = ({ post, closeModal }) => {
       likedBy: [], // 초기화
       dislikedBy: [], // 초기화
     };
-
     const postRef = doc(db, 'Community', post.id);
     await updateDoc(postRef, {
       comments: [...comments, newComment],
     });
-
     setComments([...comments, newComment]); // 댓글 상태 업데이트
     setComment(''); // 입력 필드 초기화
   };
 
+  // 댓글 추천 시 호출
   const handleCommentLike = async (index: number) => {
     if (!userData) {
       alert('로그인이 필요한 서비스입니다.');
       return;
     }
-
     const updatedComments = [...comments];
     const comment = updatedComments[index];
-
     if (comment.userId === userData.uid) {
       alert('자신의 댓글은 추천할 수 없습니다.');
       return;
     }
-
-    // 이미 추천한 경우
     if (comment.likedBy?.includes(post.id)) {
       alert('이미 추천한 댓글입니다.');
       return;
     }
-
     // 추천 수 증가 및 사용자 ID 추가
     comment.commentLikes += 1;
     comment.likedBy = [...(comment.likedBy || []), post.id];
@@ -147,30 +135,25 @@ const ViewPost: React.FC<ViewPostProps> = ({ post, closeModal }) => {
     await updateDoc(postRef, {
       comments: updatedComments,
     });
-
     setComments(updatedComments);
   };
 
+  // 댓글 비추천 시 호출
   const handleCommentDislike = async (index: number) => {
     if (!userData) {
       alert('로그인이 필요한 서비스입니다.');
       return;
     }
-
     const updatedComments = [...comments];
     const comment = updatedComments[index];
-
     if (comment.userId === userData.uid) {
       alert('자신의 댓글은 비추천할 수 없습니다.');
       return;
     }
-
-    // 이미 비추천한 경우
     if (comment.dislikedBy?.includes(post.id)) {
       alert('이미 비추천한 댓글입니다.');
       return;
     }
-
     // 비추천 수 증가 및 사용자 ID 추가
     comment.commentDisLikes += 1;
     comment.dislikedBy = [...(comment.dislikedBy || []), post.id];
@@ -179,7 +162,6 @@ const ViewPost: React.FC<ViewPostProps> = ({ post, closeModal }) => {
     await updateDoc(postRef, {
       comments: updatedComments,
     });
-
     setComments(updatedComments);
   };
 
@@ -219,10 +201,12 @@ const ViewPost: React.FC<ViewPostProps> = ({ post, closeModal }) => {
             __html: post.content.replace(/\n/g, '<br />'),
           }}
         />
+
         <ButtonContainer>
           <LikeButton onClick={handleLike}>추천</LikeButton>
           <CloseButton onClick={closeModal}>닫기</CloseButton>
         </ButtonContainer>
+
         <CommentSection>
           <hr />
           <h3 style={{ paddingTop: '5px' }}>Comment ({comments.length})</h3>
@@ -262,6 +246,7 @@ const ViewPost: React.FC<ViewPostProps> = ({ post, closeModal }) => {
               </CommentItem>
             ))}
           </CommentList>
+
           <CommentForm onSubmit={handleCommentSubmit}>
             <CommentInput
               value={comment}

@@ -16,17 +16,18 @@ import {
 } from 'firebase/firestore';
 import { useAuth } from '../UserContext';
 
+// 각 Todo 항목의 구조
 interface TList {
-  id: string; // Firestore의 문서 ID를 사용할 것이므로 string으로 변경
+  id: string; // 특정 todo 항목을 고유하게 식별
   text: string;
   completed: boolean;
-  userID: string; // userID 추가
+  userID: string; // Todo 항목을 생성한 사용자
 }
 
 const TodoPage: React.FC = () => {
-  const [inputText, setInputText] = useState('');
-  const [todoList, setTodoList] = useState<TList[]>([]);
-  const { userData } = useAuth();
+  const [inputText, setInputText] = useState(''); // 입력 필드의 텍스트 관리
+  const [todoList, setTodoList] = useState<TList[]>([]); // Todo 항목의 배열 관리
+  const { userData } = useAuth(); // 현재 로그인된 사용자의 정보
 
   const textTypingHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     // 입력 길이를 체크하여 25자 이하일 경우에만 상태 업데이트
@@ -35,10 +36,11 @@ const TodoPage: React.FC = () => {
     }
   };
 
+  // Todo 추가시 호출
   const textInputHandler = async (
     event: React.FormEvent<HTMLFormElement>,
   ): Promise<void> => {
-    event.preventDefault();
+    event.preventDefault(); // HTML 폼의 기본 동작(페이지 새로고침)을 막기 위해 사용
 
     if (!userData) {
       alert('로그인이 필요한 서비스입니다.');
@@ -48,37 +50,38 @@ const TodoPage: React.FC = () => {
     try {
       await addDoc(collection(db, 'TodoList'), {
         Todo: inputText,
+        completed: false,
         created: Timestamp.now(),
-        userID: userData.uid, // 현재 사용자의 ID 추가
-        completed: false, // completed 필드 추가
+        userID: userData.uid,
       });
-
-      setInputText(''); // 입력 후 텍스트 초기화
+      setInputText(''); // 입력 후 텍스트 초기화. 문서 저장이 완료된 이후에 실행됨
     } catch (error) {
       console.error('Error adding document: ', error);
     }
   };
 
+  // 컴포넌트가 마운트될 때 Firestore에서 Todo항목을 실시간으로 로드해옴
   useEffect(() => {
-    if (!userData) return; // 사용자가 로그인하지 않은 경우
+    if (!userData) return;
 
-    const q = query(collection(db, 'TodoList'), orderBy('created'));
+    const q = query(collection(db, 'TodoList'), orderBy('created')); // 데이터 로드 쿼리
+
+    // onSnapshot => DB 실시간 데이터 변경 감지. 감지 시 호출됨
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const newTodoList: TList[] = snapshot.docs
+      const newTodoList: TList[] = snapshot.docs // snapshot.docs => DB에서 가져온 문서배열
         .map((doc) => ({
-          id: doc.id,
+          id: doc.id, // 문서의 고유 ID
           text: doc.data().Todo,
-          completed: doc.data().completed || false, // completed 필드도 포함
+          completed: doc.data().completed || false,
           userID: doc.data().userID, // 사용자 ID 추가
         }))
         .filter((todo) => todo.userID === userData.uid); // 로그인한 사용자와 일치하는 항목만 필터링
-
       setTodoList(newTodoList); // 필터링된 상태 업데이트
     });
-
     return () => unsubscribe(); // 컴포넌트 언마운트 시 리스너 해제
-  }, [userData]); // userData가 변경될 때마다 실행
+  }, [userData]); // userData가 변경될 때마다 useEffect 훅을 실행
 
+  // TodoList 삭제 함수
   const textDeleteHandler = async (id: string) => {
     // Firestore에서 해당 문서 삭제
     try {
@@ -90,6 +93,7 @@ const TodoPage: React.FC = () => {
     }
   };
 
+  // TodoList 수정 함수
   const textUpdateHandler = async (newTodo: TList): Promise<void> => {
     // Firestore에 업데이트
     try {
@@ -100,12 +104,10 @@ const TodoPage: React.FC = () => {
         // 입력받은 값과 기존 값이 다를 경우 completed를 false로 변경
         newTodo.completed = false;
       }
-
       await updateDoc(doc(db, 'TodoList', newTodo.id), {
         Todo: newTodo.text,
-        completed: newTodo.completed, // completed 필드도 업데이트
+        completed: newTodo.completed,
       });
-
       // 로컬 상태에서 업데이트
       const newTodoList = todoList.map((item) => {
         if (item.id === newTodo.id) {
@@ -125,7 +127,6 @@ const TodoPage: React.FC = () => {
       <HomeContainer>
         <div className="entireContainer">
           <h1>
-            {' '}
             {userData ? (
               <h2>{`${userData.displayName}'s TodoList`}</h2>
             ) : (
@@ -139,13 +140,12 @@ const TodoPage: React.FC = () => {
           />
           {todoList.map((item) => (
             <TodoList
-              key={item.id} // key prop 추가
               id={item.id}
               text={item.text}
               completed={item.completed}
-              userID={item.userID} // userID 추가
-              onClickDelete={textDeleteHandler} // 삭제 핸들러 추가
-              onClickUpdate={textUpdateHandler} // 수정 핸들러 추가
+              userID={item.userID}
+              onClickDelete={textDeleteHandler}
+              onClickUpdate={textUpdateHandler}
             />
           ))}
         </div>
