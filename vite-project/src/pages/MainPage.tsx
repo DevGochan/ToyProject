@@ -15,6 +15,7 @@ const MainPage = () => {
           />
         </TodoBtn>
       </Link>
+
       <Link to="/CommunityPage" style={{ display: 'contents' }}>
         <TodoBtn>
           <img
@@ -30,21 +31,21 @@ const MainPage = () => {
 
 const ButtonContainer = styled.div`
   display: flex;
-  justify-content: center; /* 버튼들을 중앙 정렬 */
-  margin-top: 100px; /* 상단 여백 */
+  justify-content: center;
+  margin-top: 100px;
 `;
 
 const TodoBtn = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 30%; /* 버튼 너비 조정 */
-  height: 30%; /* 버튼 높이 조정 */
-  margin: 0 10px; /* 좌우 여백 추가 */
+  width: 30%;
+  height: 30%;
+  margin: 0 10px;
   border-radius: 20px;
   background-color: #f0f0f0;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  overflow: hidden; /* 이미지가 버튼 크기를 넘지 않도록 설정 */
+  overflow: hidden;
 
   transition: transform 0.2s, background-color 0.2s;
 

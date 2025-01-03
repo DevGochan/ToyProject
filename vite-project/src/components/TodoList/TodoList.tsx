@@ -83,7 +83,7 @@ const TodoList = ({
         </TodoContainer>
       ) : (
         <TodoContainer>
-          <form onSubmit={handleFormSubmit}>
+          <form onSubmit={handleFormSubmit} style={{ width: '100%' }}>
             <input
               type="text"
               value={updatedText}

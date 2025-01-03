@@ -81,7 +81,7 @@ const ViewPost: React.FC<ViewPostProps> = ({ post, closeModal }) => {
 
       // 추천한 사용자의 ID를 추가
       if (likedBy.length < 3) {
-        likedBy.push(userData);
+        likedBy.push(userData.uid);
         setLikes(updatedLikes);
         await updateDoc(postRef, { likes: updatedLikes, likedBy });
       } else {
